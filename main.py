@@ -2,35 +2,41 @@ import os
 from flask import Flask, request, jsonify
 import instaloader
 from flask_cors import CORS 
+import logging
 
 app = Flask(__name__)
 CORS(app)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Instaloader
 loader = instaloader.Instaloader()
 
 # Retrieve credentials from environment variables
-USERNAME = os.getenv('scr.ipptify')
-PASSWORD = os.getenv('mino05varsh06')
+USERNAME = os.getenv('INSTALOADER_USERNAME')
+PASSWORD = os.getenv('INSTALOADER_PASSWORD')
 
 if not USERNAME or not PASSWORD:
+    logger.error("Instagram credentials are not set in environment variables.")
     raise ValueError("Instagram credentials are not set in environment variables.")
 
 # Log in to Instagram
 try:
     loader.login(USERNAME, PASSWORD)
-    print("Logged in to Instagram successfully.")
+    logger.info("Logged in to Instagram successfully.")
 except instaloader.exceptions.BadCredentialsException:
-    print("Invalid credentials, please check your username and password.")
+    logger.error("Invalid credentials, please check your username and password.")
     raise
 except instaloader.exceptions.TwoFactorAuthRequiredException:
-    print("Two-factor authentication is enabled on this account. Please handle 2FA.")
+    logger.error("Two-factor authentication is enabled on this account. Please handle 2FA.")
     raise
 except instaloader.exceptions.ConnectionException as ce:
-    print(f"Connection error during login: {str(ce)}")
+    logger.error(f"Connection error during login: {str(ce)}")
     raise
 except Exception as e:
-    print(f"An error occurred during login: {str(e)}")
+    logger.error(f"An error occurred during login: {str(e)}")
     raise
 
 @app.route('/profile', methods=['GET'])
