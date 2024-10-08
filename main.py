@@ -34,14 +34,14 @@ def get_profile():
         profile = instaloader.Profile.from_username(loader.context, username)
 
         # Prepare the profile data
-        profile_data = {
-            'username': profile.username,
-            'fullname': profile.full_name,
-            'bio': profile.biography,
-            'followers': profile.followers,
-            'following': profile.followees,
-            'posts': profile.mediacount,
-        }
+       profile_data = {
+    'username': profile.username,
+    'full_name': profile.full_name,  # Changed to 'full_name'
+    'bio': profile.biography,
+    'followers': profile.followers,
+    'following': profile.followees,
+    'posts': profile.mediacount,
+}
 
         return jsonify(profile_data), 200
 
@@ -51,5 +51,5 @@ def get_profile():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True, port=5000)
